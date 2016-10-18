@@ -140,17 +140,17 @@ def to_file(filename, net):
     file.truncate()
 
     # num inputs, num outputs, num hidden layers
-    contents = net.num_inputs + " " + net.num_outputs + " " + len(net.layers)
+    contents = str(net.num_inputs) + " " + str(net.num_outputs) + " " + str(len(net.layers))
 
     # topology
     for i in net.topology:
-        contents += " " + i
+        contents += " " + str(i)
 
     # weights
     for i in range(0, len(net.layers)):
         for j in range(0, len(net.layers[i])):
             for weight in net.layers[i][j]:
-                contents += " " + weight
+                contents += " " + str(weight)
 
     file.write(contents)
     file.close()

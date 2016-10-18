@@ -10,9 +10,9 @@ def main(argv):
     3) uCrossover
     4) Save to file""")
 
-    choice = int(input())
+    choice = int(input("> "))
 
-    if choice > 3 or choice < 1:
+    if choice > 4 or choice < 1:
         print("Invalid choice")
         return
 
@@ -33,24 +33,24 @@ def main(argv):
         print("Parent 2\n", net2.layers, "\n")
 
         child1, child2 = neuralnet.sp_crossover(net1, net2)
-        print("Child 1", child1.layers)
-        print("Child 2", child2.layers)
+        print("Child 1\n", child1.layers, "\n")
+        print("Child 2\n", child2.layers, "\n")
 
     # Uniform crossover
     elif choice == 3:
         net1 = neuralnet.FFNN([3, 3, 3], 3, 3)
         net2 = neuralnet.FFNN([3, 3, 3], 3, 3)
 
-        print("Parent 1", net1.layers)
-        print("Parent 2", net2.layers)
+        print("Parent 1\n", net1.layers, "\n")
+        print("Parent 2\n", net2.layers, "\n")
 
         child1, child2 = neuralnet.u_crossover(net1, net2)
-        print("Child 1", child1.layers)
-        print("Child 2", child2.layers)
+        print("Child 1\n", child1.layers, "\n")
+        print("Child 2\n", child2.layers, "\n")
 
     elif choice == 4:
         net = neuralnet.FFNN([3, 3, 3], 3, 3)
-        print("Original network", net.layers)
+        print("Original network\n", net.layers, "\n")
         print("Writing to test.net")
         neuralnet.to_file("test.net", net)
 
