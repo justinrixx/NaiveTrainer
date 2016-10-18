@@ -37,6 +37,9 @@ def make_net(topology, num_inputs, num_outputs):
 
 
 def make_layer(num_inputs, num_nodes):
+    """
+    Makes a layer of nodes in a neural net
+    """
 
     layer = []
 
@@ -47,10 +50,14 @@ def make_layer(num_inputs, num_nodes):
 
 
 def make_node(num_inputs):
+    """
+    Makes a node in a neural network
+    """
 
     node = []
 
-    for i in range(0, num_inputs):
+    # +1 for the bias
+    for i in range(0, num_inputs + 1):
 
         # -1 <= weight < 1
         weight = (random.random() - .5) * 2.0
@@ -174,8 +181,7 @@ def mutate(net):
             for k in range(0, len(network[i][j])):
 
                 coin = random.randint(0, L)
-
-                if coin == 0:
+                if coin == 1:
                     # -5 <= r <= 5
                     r = (random.random() - .5) * 5.0
 
