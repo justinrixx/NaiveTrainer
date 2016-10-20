@@ -1,5 +1,14 @@
 import sys
 import getopt
+import neuralnet
+import os
+import nnrunner
+import numpy as np
+
+# constants
+NET_INPUTS = 31
+NET_OUTPUTS = 4
+INIT_DIR = "generationinit"
 
 
 def main(argv):
@@ -38,12 +47,77 @@ def main(argv):
 
     cutoff_point = int(survival_percentage * population_size)
 
-    print("all the options:\npopulation_size: " + str(population_size)
-          + "\nnum_iterations: " + str(num_iterations)
-          + "\nsurvival_percentage: " + str(survival_percentage)
-          + "\ntopology:", topology)
+    # newlist = sorted(list_to_be_sorted, key=lambda k: k['name'])
 
     return 0
+
+
+def generate_brains(population, topology):
+    brains = []
+
+    # make a directory
+    if not os.path.exists(INIT_DIR):
+        os.makedirs(INIT_DIR)
+
+    for i in range(0, population):
+        organism = {
+            'net': neuralnet.make_net(topology, NET_INPUTS, NET_OUTPUTS),
+            'name': "0-" + str(i) + ".net",
+            'gen': 2}
+
+        # write it out and evaluate
+        neuralnet.to_file(INIT_DIR + "/" + organism['name'], organism['net'])
+        organism['fitness'] = nnrunner.run(INIT_DIR + "/" + organism['name'])
+
+        brains.append(organism)
+
+    return brains
+
+
+def kill_stuff(brains, cutoff):
+    
+    # http://stackoverflow.com/questions/72899/how-do-i-sort-a-list-of-dictionaries-by-values-of-the-dictionary-in-python
+    # sort it out, strongest at the front
+    brains.sort(key=lambda k: k['name'], reverse=True)
+
+    # kill the ones that don't deserve to live
+    for i in range(0, len(brains) - cutoff):
+        brains.pop()
+
+
+def repopulate(brains, population, generation):
+
+    orgnum = 0
+
+    diff = population - len(brains)
+
+    # make the fitnesses into a probability distribution
+    fits = [x['fitness'] for x in brains]
+    dist = [x / np.sum(fits) for x in fits]
+
+    parents = np.random.choice(brains, size=(diff * 2), p=dist)
+
+    for i in range(0, len(parents), 2):
+        child1, child2 = neuralnet.sp_crossover(parents[i], parents[i + 1])
+
+        neuralnet.to_file("temp.net", child1)
+        score1 = nnrunner.run("temp.net")
+
+        neuralnet.to_file("temp.net", child2)
+        score2 = nnrunner.run("temp.net")
+
+        organism = {'name': str(generation) + "-" + str(orgnum) + ".net",
+                    'gen': 2}
+
+        # only the strong are cared for
+        if score1 > score2:
+            organism['fitness'] = score1
+            organism['net'] = child1
+        else:
+            organism['fitness'] = score1
+            organism['net'] = child1
+
+    brains.append(organism)
 
 
 # This is here to ensure main is only called when
