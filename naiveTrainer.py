@@ -81,7 +81,7 @@ def main(argv):
 
             # write out to the index and the points
             index.write(str(organism['fitness']) + "," + organismfilename)
-            points.write(str(iteration) + "," + organism['fitness'])
+            points.write(str(iteration) + "," + str(organism['fitness']))
 
         index.close()
 
@@ -97,7 +97,7 @@ def generate_brains(population, topology):
 
     for i in range(0, population):
         organism = {
-            'net': neuralnet.make_net(topology, NET_INPUTS, NET_OUTPUTS),
+            'net': neuralnet.FFNN(topology, NET_INPUTS, NET_OUTPUTS),
             'name': "0-" + str(i) + ".net",
             'gen': 2}
 
@@ -134,7 +134,7 @@ def repopulate(brains, population, generation):
     parents = np.random.choice(brains, size=(diff * 2), p=dist)
 
     for i in range(0, len(parents), 2):
-        child1, child2 = neuralnet.sp_crossover(parents[i], parents[i + 1])
+        child1, child2 = neuralnet.sp_crossover(parents[i]['net'], parents[i + 1]['net'])
 
         neuralnet.to_file("temp.net", child1)
         score1 = nnrunner.run("temp.net")
