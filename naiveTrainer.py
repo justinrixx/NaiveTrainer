@@ -47,9 +47,45 @@ def main(argv):
 
     cutoff_point = int(survival_percentage * population_size)
 
-    # newlist = sorted(list_to_be_sorted, key=lambda k: k['name'])
+    brains = generate_brains(population_size, topology)
 
-    return 0
+    # open the points file
+    points = open("points.csv", "w")
+    points.truncate()
+
+    for iteration in range(0, num_iterations):
+        print("Generation " + str(iteration + 1))
+
+        # make the directory if it doesn't exist
+        dirname = "generation" + str(iteration + 1)
+        if not os.path.exists(dirname):
+            os.makedirs(dirname)
+
+        # the index file
+        index = open(dirname + "/index.csv", "w")
+
+        # life is hard . . .
+        kill_stuff(brains, cutoff_point)
+        repopulate(brains, population_size, 0)
+
+        for organism in brains:
+            # write to file
+            organismfilename = dirname + "/" + organism['name']
+            neuralnet.to_file(organismfilename, organism['net'])
+
+            # evaluate
+            score = nnrunner.run(organismfilename)
+
+            organism['fitness'] = int(((organism['gen'] - 1 / organism['gen']) * organism['fitness'])
+                                      + (1 / organism['gen'] * score))
+
+            # write out to the index and the points
+            index.write(str(organism['fitness']) + "," + organismfilename)
+            points.write(str(iteration) + "," + organism['fitness'])
+
+        index.close()
+
+    points.close()
 
 
 def generate_brains(population, topology):
@@ -75,10 +111,10 @@ def generate_brains(population, topology):
 
 
 def kill_stuff(brains, cutoff):
-    
+
     # http://stackoverflow.com/questions/72899/how-do-i-sort-a-list-of-dictionaries-by-values-of-the-dictionary-in-python
     # sort it out, strongest at the front
-    brains.sort(key=lambda k: k['name'], reverse=True)
+    brains.sort(key=lambda k: k['fitness'], reverse=True)
 
     # kill the ones that don't deserve to live
     for i in range(0, len(brains) - cutoff):
