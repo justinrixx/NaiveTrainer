@@ -66,7 +66,7 @@ def main(argv):
 
         # life is hard . . .
         kill_stuff(brains, cutoff_point)
-        repopulate(brains, population_size, 0)
+        repopulate(brains, population_size, iteration)
 
         for organism in brains:
             # write to file
@@ -76,12 +76,12 @@ def main(argv):
             # evaluate
             score = nnrunner.run(organismfilename)
 
-            organism['fitness'] = int(((organism['gen'] - 1 / organism['gen']) * organism['fitness'])
-                                      + (1 / organism['gen'] * score))
+            organism['fitness'] = int((((organism['gen'] - 1 / organism['gen']) * organism['fitness'])
+                                      + (1 / organism['gen'] * score)))
 
             # write out to the index and the points
-            index.write(str(organism['fitness']) + "," + organismfilename)
-            points.write(str(iteration) + "," + str(organism['fitness']))
+            index.write(str(organism['fitness']) + "," + organismfilename.split('/')[-1] + "\n")
+            points.write(str(iteration) + "," + str(organism['fitness']) + "\n")
 
         index.close()
 
