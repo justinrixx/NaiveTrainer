@@ -140,7 +140,7 @@ def to_file(filename, net):
     file.truncate()
 
     # num inputs, num outputs, num hidden layers
-    contents = str(net.num_inputs) + " " + str(net.num_outputs) + " " + str(len(net.layers))
+    contents = str(net.num_inputs) + " " + str(net.num_outputs) + " " + str(len(net.layers) - 2)
 
     # topology
     for i in net.topology:
