@@ -76,8 +76,8 @@ def main(argv):
             # evaluate
             score = nnrunner.run(organismfilename)
 
-            organism['fitness'] = int((((organism['gen'] - 1 / organism['gen']) * organism['fitness'])
-                                      + (1 / organism['gen'] * score)))
+            organism['fitness'] = int((((organism['gen'] - 1) / organism['gen']) * organism['fitness'])
+                                      + (1 / organism['gen'] * score))
 
             # write out to the index and the points
             index.write(str(organism['fitness']) + "," + organismfilename.split('/')[-1] + "\n")
@@ -142,7 +142,7 @@ def repopulate(brains, population, generation):
         neuralnet.to_file("temp.net", child2)
         score2 = nnrunner.run("temp.net")
 
-        organism = {'name': str(generation) + "-" + str(orgnum) + ".net",
+        organism = {'name': str(generation + 1) + "-" + str(orgnum) + ".net",
                     'gen': 2}
 
         # only the strong are cared for
