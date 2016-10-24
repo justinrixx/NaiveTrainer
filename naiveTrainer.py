@@ -134,6 +134,7 @@ def repopulate(brains, population, generation):
     parents = np.random.choice(brains, size=(diff * 2), p=dist)
 
     for i in range(0, len(parents), 2):
+
         child1, child2 = neuralnet.sp_crossover(parents[i]['net'], parents[i + 1]['net'])
 
         neuralnet.to_file("temp.net", child1)
@@ -153,7 +154,8 @@ def repopulate(brains, population, generation):
             organism['fitness'] = score1
             organism['net'] = child1
 
-    brains.append(organism)
+        brains.append(organism)
+        orgnum += 1
 
 
 # This is here to ensure main is only called when
