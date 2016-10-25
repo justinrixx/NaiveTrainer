@@ -27,7 +27,7 @@ def make_net(topology, num_inputs, num_outputs):
     layers = [make_layer(num_inputs, topology[0])]
 
     # hidden layers
-    for i in range(0, len(topology)):
+    for i in range(1, len(topology)):
         layers.append(make_layer(len(layers[i - 1]), topology[i]))
 
     # output layer
