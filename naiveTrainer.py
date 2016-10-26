@@ -3,6 +3,7 @@ import getopt
 import neuralnet
 import os
 import nnrunner
+import copy
 import numpy as np
 
 # constants
@@ -65,7 +66,12 @@ def main(argv):
         index = open(dirname + "/index.csv", "w")
 
         # life is hard . . .
-        kill_stuff(brains, cutoff_point)
+        #kill_stuff(brains, cutoff_point)
+        # make the fitnesses into a probability distribution
+        fits = [x['fitness'] for x in brains]
+        dist = [x / np.sum(fits) for x in fits]
+
+        brains = copy.deepcopy(list(np.random.choice(brains, size=cutoff_point, p=dist, replace=False)))
         repopulate(brains, population_size, iteration)
 
         for organism in brains:
@@ -112,13 +118,20 @@ def generate_brains(population, topology):
 
 def kill_stuff(brains, cutoff):
 
+    # pick survivors
+    # make the fitnesses into a probability distribution
+    fits = [x['fitness'] for x in brains]
+    dist = [x / np.sum(fits) for x in fits]
+
+    brains = copy.deepcopy(list(np.random.choice(brains, size=cutoff, p=dist, replace=False)))
+
     # http://stackoverflow.com/questions/72899/how-do-i-sort-a-list-of-dictionaries-by-values-of-the-dictionary-in-python
     # sort it out, strongest at the front
-    brains.sort(key=lambda k: k['fitness'], reverse=True)
+    #brains.sort(key=lambda k: k['fitness'], reverse=True)
 
     # kill the ones that don't deserve to live
-    for i in range(0, len(brains) - cutoff):
-        brains.pop()
+    #for i in range(0, len(brains) - cutoff):
+    #    brains.pop()
 
 
 def repopulate(brains, population, generation):

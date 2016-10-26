@@ -5,6 +5,7 @@ that type of a structure.
 """
 
 import random
+import numpy as np
 
 
 class FFNN:
@@ -58,9 +59,12 @@ def make_node(num_inputs):
 
     # +1 for the bias
     for i in range(0, num_inputs + 1):
+        weight = np.random.exponential()
 
-        # -1 <= weight < 1
-        weight = (random.random() - .5) * 2.0
+        # 50% chance to be negative
+        if random.randint(0, 1) == 0:
+            weight *= -1
+
         node.append(weight)
 
     return node
@@ -140,7 +144,7 @@ def to_file(filename, net):
     file.truncate()
 
     # num inputs, num outputs, num hidden layers
-    contents = str(net.num_inputs) + " " + str(net.num_outputs) + " " + str(len(net.layers) - 2)
+    contents = str(net.num_inputs) + " " + str(net.num_outputs) + " " + str(len(net.layers) - 1)
 
     # topology
     for i in net.topology:
@@ -171,10 +175,11 @@ def mutate(net):
 
     # The chance for each weight to change is 1 / L where L is
     #   the number of weights in the network
-    L = 0
-    for i in range(0, len(network)):
-        for j in range(0, len(network[i])):
-            L += len(network[i][j])
+    #L = 0
+    #for i in range(0, len(network)):
+    #    for j in range(0, len(network[i])):
+    #        L += len(network[i][j])
+    L = 10
 
     for i in range(0, len(network)):
         for j in range(0, len(network[i])):
@@ -183,10 +188,11 @@ def mutate(net):
                 coin = random.randint(0, L)
                 if coin == 1:
                     # -5 <= r <= 5
-                    r = (random.random() - .5) * 5.0
+                    #r = (random.random() - .5) * 5.0
+                    r = np.random.exponential()
 
-                    if network[i][j][k] != 0.0:
-                        network[i][j][k] *= r
-                    else:
-                        print("Weight is 0")
-                        network[i][j][k] += r
+                    # 50% chance to be negative
+                    if random.randint(0, 1) == 0:
+                        r *= -1
+
+                    network[i][j][k] += r
