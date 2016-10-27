@@ -10,6 +10,7 @@ import numpy as np
 NET_INPUTS = 21
 NET_OUTPUTS = 5
 INIT_DIR = "generationinit"
+NUM_AVERAGE = 3
 
 
 def main(argv):
@@ -65,25 +66,17 @@ def main(argv):
         # the index file
         index = open(dirname + "/index.csv", "w")
 
-        # life is hard . . .
-        #kill_stuff(brains, cutoff_point)
-        # make the fitnesses into a probability distribution
+        # kill stuff
         fits = [x['fitness'] for x in brains]
         dist = [x / np.sum(fits) for x in fits]
-
         brains = copy.deepcopy(list(np.random.choice(brains, size=cutoff_point, p=dist, replace=False)))
+
         repopulate(brains, population_size, iteration)
 
         for organism in brains:
             # write to file
             organismfilename = dirname + "/" + organism['name']
             neuralnet.to_file(organismfilename, organism['net'])
-
-            # evaluate
-            score = nnrunner.run(organismfilename)
-
-            organism['fitness'] = int((((organism['gen'] - 1) / organism['gen']) * organism['fitness'])
-                                      + (1 / organism['gen'] * score))
 
             # write out to the index and the points
             index.write(str(organism['fitness']) + "," + organismfilename.split('/')[-1] + "\n")
@@ -109,29 +102,11 @@ def generate_brains(population, topology):
 
         # write it out and evaluate
         neuralnet.to_file(INIT_DIR + "/" + organism['name'], organism['net'])
-        organism['fitness'] = nnrunner.run(INIT_DIR + "/" + organism['name'])
+        organism['fitness'] = get_fitness(INIT_DIR + "/" + organism['name'])
 
         brains.append(organism)
 
     return brains
-
-
-def kill_stuff(brains, cutoff):
-
-    # pick survivors
-    # make the fitnesses into a probability distribution
-    fits = [x['fitness'] for x in brains]
-    dist = [x / np.sum(fits) for x in fits]
-
-    brains = copy.deepcopy(list(np.random.choice(brains, size=cutoff, p=dist, replace=False)))
-
-    # http://stackoverflow.com/questions/72899/how-do-i-sort-a-list-of-dictionaries-by-values-of-the-dictionary-in-python
-    # sort it out, strongest at the front
-    #brains.sort(key=lambda k: k['fitness'], reverse=True)
-
-    # kill the ones that don't deserve to live
-    #for i in range(0, len(brains) - cutoff):
-    #    brains.pop()
 
 
 def repopulate(brains, population, generation):
@@ -152,10 +127,10 @@ def repopulate(brains, population, generation):
         #child1, child2 = neuralnet.u_crossover(parents[i]['net'], parents[i + 1]['net'])
 
         neuralnet.to_file("temp.net", child1)
-        score1 = nnrunner.run("temp.net")
+        score1 = get_fitness("temp.net")
 
         neuralnet.to_file("temp.net", child2)
-        score2 = nnrunner.run("temp.net")
+        score2 = get_fitness("temp.net")
 
         organism = {'name': str(generation + 1) + "-" + str(orgnum) + ".net",
                     'gen': 2}
@@ -170,6 +145,13 @@ def repopulate(brains, population, generation):
 
         brains.append(organism)
         orgnum += 1
+
+
+def get_fitness(fname):
+    scores = []
+    for i in range(0, NUM_AVERAGE):
+        scores.append(nnrunner.run(fname))
+    return int(np.mean(scores))
 
 
 # This is here to ensure main is only called when
