@@ -7,8 +7,8 @@ import copy
 import numpy as np
 
 # constants
-NET_INPUTS = 31
-NET_OUTPUTS = 4
+NET_INPUTS = 21
+NET_OUTPUTS = 5
 INIT_DIR = "generationinit"
 
 
@@ -149,6 +149,7 @@ def repopulate(brains, population, generation):
     for i in range(0, len(parents), 2):
 
         child1, child2 = neuralnet.sp_crossover(parents[i]['net'], parents[i + 1]['net'])
+        #child1, child2 = neuralnet.u_crossover(parents[i]['net'], parents[i + 1]['net'])
 
         neuralnet.to_file("temp.net", child1)
         score1 = nnrunner.run("temp.net")
@@ -164,8 +165,8 @@ def repopulate(brains, population, generation):
             organism['fitness'] = score1
             organism['net'] = child1
         else:
-            organism['fitness'] = score1
-            organism['net'] = child1
+            organism['fitness'] = score2
+            organism['net'] = child2
 
         brains.append(organism)
         orgnum += 1
