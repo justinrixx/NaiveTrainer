@@ -32,6 +32,16 @@ def test_net_sizes():
 
     test_net_size(net, expected_layers, expected_weights, expected_weight_number)
 
+    # Test 3 - The size of the easy way to play
+    net = neuralnet.FFNN([13], 21, 5)
+    expected_layers = [13, 5]
+    # 13 22s, 5 14s
+    expected_weights = [[22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22],
+                        [14, 14, 14, 14, 14]]
+    expected_weight_number = 356
+
+    test_net_size(net, expected_layers, expected_weights, expected_weight_number)
+
 
 def test_net_size(net, expected_layers, expected_weights, expected_weight_number):
     """
