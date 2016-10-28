@@ -7,7 +7,7 @@ import copy
 import numpy as np
 
 # constants
-NET_INPUTS = 21
+NET_INPUTS = 20
 NET_OUTPUTS = 5
 INIT_DIR = "generationinit"
 NUM_AVERAGE = 3
