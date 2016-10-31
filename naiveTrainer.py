@@ -7,7 +7,7 @@ import copy
 import numpy as np
 
 # constants
-NET_INPUTS = 20
+NET_INPUTS = 21
 NET_OUTPUTS = 5
 INIT_DIR = "generationinit"
 NUM_AVERAGE = 3
@@ -69,7 +69,7 @@ def main(argv):
         # kill stuff
         fits = [x['fitness'] for x in brains]
         dist = [x / np.sum(fits) for x in fits]
-        brains = copy.deepcopy(list(np.random.choice(brains, size=cutoff_point, p=dist, replace=False)))
+        brains = list(np.random.choice(brains, size=cutoff_point, p=dist, replace=False))
 
         repopulate(brains, population_size, iteration)
 
