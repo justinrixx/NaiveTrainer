@@ -17,6 +17,21 @@ class FFNN:
         self.num_outputs = num_outputs
         self.layers = make_net(topology, num_inputs, num_outputs)
 
+    def get_outputs(self, inputs):
+        """
+        Get the outputs of a neural network from the inputs
+        :param inputs: A 1-dimensional array of numbers to input to the net
+        :return: A 1-dimensional array of numbers that the net outputs
+        """
+
+        # first layer
+        out = get_outputs(self.layers[0], inputs)
+
+        for i in range (1, len(self.layers)):
+            out = get_outputs(self.layers[i], out)
+
+        return out
+
 
 def make_net(topology, num_inputs, num_outputs):
     """
@@ -196,3 +211,28 @@ def mutate(net):
                         r *= -1
 
                     network[i][j][k] += r
+
+
+def get_outputs(layer, inputs):
+    """
+    A helper function that gets the output of a layer in a neural net
+    :param layer: A 2-dimensional array of numbers ( layer = [node = [ weights ] ])
+    :param inputs: A 1-dimensional array of numbers. Inputs to the layer
+    :return: The output of the layer
+    """
+
+    outputs = []
+
+    for node in layer:
+        # there should be 1 extra input for the bias
+        assert len(node) == len(inputs) + 1
+
+        total = 0
+        for i in range(0, len(node)):
+            total += node[i] * inputs[i]
+
+        # bias
+        total += node[-1] * -1
+        outputs.append(np.tanh(total))
+
+    return outputs

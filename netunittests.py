@@ -1,5 +1,6 @@
 import neuralnet
 import sys
+import numpy as np
 
 
 def main(argv):
@@ -74,6 +75,21 @@ def test_net_size(net, expected_layers, expected_weights, expected_weight_number
     assert total == expected_weight_number, 'total: %(act)d, expected_weight_number: %(exp)d' \
         % {'exp': expected_weight_number, 'act': total}
 
+
+def test_net_outputs():
+
+    net = neuralnet.FFNN([5, 5], 4, 3)
+
+    # data to feed in
+    inputs = [1, 2, 3, 4]
+
+    out1 = net.get_outputs(inputs)
+    out2 = net.get_outputs(inputs)
+
+    assert len(out1) == len(out2) == 3, 'Output length != 3. len(out1): %(ou1)d, len(out2): %(ou2)d' \
+        % {'ou1': len(out1), 'ou2': len(out2)}
+
+    np.testing.assert_array_equal(out1, out2, err_msg='Neural net outputs are not equal')
 
 if __name__ == "__main__":
     main(sys.argv)
