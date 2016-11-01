@@ -229,7 +229,7 @@ def get_outputs(layer, inputs):
 
         total = 0
         for i in range(0, len(node) - 1):
-            total += node[i] * inputs[i]
+            total += node[i] * float(inputs[i])
 
         # bias
         total += node[-1] * -1

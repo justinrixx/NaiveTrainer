@@ -3,7 +3,6 @@ import getopt
 import neuralnet
 import os
 import nnrunner
-import copy
 import numpy as np
 
 # constants
