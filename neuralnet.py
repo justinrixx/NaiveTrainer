@@ -228,7 +228,7 @@ def get_outputs(layer, inputs):
         assert len(node) == len(inputs) + 1
 
         total = 0
-        for i in range(0, len(node)):
+        for i in range(0, len(node) - 1):
             total += node[i] * inputs[i]
 
         # bias

@@ -8,6 +8,7 @@ def main(argv):
     This program runs a suite of unit tests
     """
     test_net_sizes()
+    test_net_outputs()
 
 
 def test_net_sizes():
