@@ -78,6 +78,9 @@ def test_net_size(net, expected_layers, expected_weights, expected_weight_number
 
 
 def test_net_outputs():
+    """
+    Tests a number of things about the feed-forward mechanism of the FFNN class
+    """
 
     net = neuralnet.FFNN([5, 5], 4, 3)
 
