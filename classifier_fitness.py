@@ -12,19 +12,16 @@ def get_fitness_file(filename: str, net: neuralnet.FFNN):
     """
 
     csv = np.genfromtxt(filename, delimiter=",", dtype=str)
-    numcols = len(csv[0])
-    data = csv[:, :numcols - 1]  # the first columns are the data
-    targets = csv[:, numcols - 1]  # the last column is the targets
 
     # test with 70% to avoid over-fitting
     cutoff_point = int(.7 * len(csv))
 
     # get a random sample of the data
-    seed = int(time.time())
-    np.random.seed(seed)
-    data = data[np.random.choice(data.shape[0], size=cutoff_point, replace=False)]
-    np.random.seed(seed)
-    targets = np.random.choice(targets, size=cutoff_point)
+    csv = csv[np.random.choice(csv.shape[0], size=cutoff_point, replace=False)]
+
+    numcols = len(csv[0])
+    data = csv[:, :numcols - 1]  # the first columns are the data
+    targets = csv[:, numcols - 1]  # the last column is the targets
 
     # pull all the duplicates from the targets list
     target_set = set(targets)
