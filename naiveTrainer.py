@@ -3,22 +3,30 @@ import getopt
 import neuralnet
 import os
 import nnrunner
+import classifier_fitness as cf
 import numpy as np
 
 # constants
-NET_INPUTS = 21
-NET_OUTPUTS = 5
+NET_INPUTS = 4
+NET_OUTPUTS = 3
 INIT_DIR = "generationinit"
 NUM_AVERAGE = 3
+DATASET_FNAME = "/home/justin/Downloads/iris.csv"
+
+# globals because yeah
+dataset = DATASET_FNAME
+num_inputs = NET_INPUTS
+num_outputs = NET_OUTPUTS
 
 
 def main(argv):
 
     # How the program is to be used
     usage = "\tusage: --pop=[population size] --it=[number of iterations] --surv=[chance to survive]" \
-            " --topology=[layer1,layer2,etc]\n"
+            " --topology=[layer1,layer2,etc], --ds=[dataset filename], --in[# of inputs] --out[# of outputs]\n"
 
-    optlist, args = getopt.getopt(argv[1:], "h", ["help", "pop=", "it=", "surv=", "topology="])
+    optlist, args = getopt.getopt(argv[1:], "h", ["help", "pop=", "it=", "surv=",
+                                                  "topology=", "ds=", "in=", "out="])
 
     # default parameters
     population_size = 100
@@ -41,6 +49,12 @@ def main(argv):
             entries = val.split(",")
             for entry in entries:
                 topology.append(int(entry))
+        elif key == "--ds":
+            dataset = str(val)
+        elif key == "--in":
+            num_inputs = int(val)
+        elif key == "--out":
+            num_outputs = int(val)
 
     # can't run without a topology
     if not topology:
@@ -95,13 +109,14 @@ def generate_brains(population, topology):
 
     for i in range(0, population):
         organism = {
-            'net': neuralnet.FFNN(topology, NET_INPUTS, NET_OUTPUTS),
+            'net': neuralnet.FFNN(topology, num_inputs, num_outputs),
             'name': "0-" + str(i) + ".net",
             'gen': 2}
 
         # write it out and evaluate
-        neuralnet.to_file(INIT_DIR + "/" + organism['name'], organism['net'])
-        organism['fitness'] = get_fitness(INIT_DIR + "/" + organism['name'])
+        #neuralnet.to_file(INIT_DIR + "/" + organism['name'], organism['net'])
+        #organism['fitness'] = get_fitness(INIT_DIR + "/" + organism['name'])
+        organism['fitness'] = get_fitness(dataset, organism['net'])
 
         brains.append(organism)
 
@@ -125,11 +140,13 @@ def repopulate(brains, population, generation):
         child1, child2 = neuralnet.sp_crossover(parents[i]['net'], parents[i + 1]['net'])
         #child1, child2 = neuralnet.u_crossover(parents[i]['net'], parents[i + 1]['net'])
 
-        neuralnet.to_file("temp.net", child1)
-        score1 = get_fitness("temp.net")
+        #neuralnet.to_file("temp.net", child1)
+        #score1 = get_fitness("temp.net")
+        score1 = get_fitness(dataset, child1)
 
-        neuralnet.to_file("temp.net", child2)
-        score2 = get_fitness("temp.net")
+        #neuralnet.to_file("temp.net", child2)
+        #score2 = get_fitness("temp.net")
+        score2 = get_fitness(dataset, child2)
 
         organism = {'name': str(generation + 1) + "-" + str(orgnum) + ".net",
                     'gen': 2}
@@ -146,11 +163,15 @@ def repopulate(brains, population, generation):
         orgnum += 1
 
 
-def get_fitness(fname):
-    scores = []
-    for i in range(0, NUM_AVERAGE):
-        scores.append(nnrunner.run(fname))
-    return int(np.mean(scores))
+#def get_fitness(fname):
+#    scores = []
+#    for i in range(0, NUM_AVERAGE):
+#        scores.append(nnrunner.run(fname))
+#    return int(np.mean(scores))
+
+
+def get_fitness(ds, net):
+    return cf.get_fitness_file(ds, net)
 
 
 # This is here to ensure main is only called when
