@@ -175,6 +175,57 @@ def to_file(filename, net):
     file.close()
 
 
+def from_file(filename):
+    """
+    Read a neural net from a file
+    :return: The neural net that was read
+    """
+
+    # ['4', '3', '1', '4', '-0.8267162400009331', ... ]
+    l = list(np.genfromtxt(filename, dtype=str, delimiter=' '))
+    assert(len(l) > 4)
+
+    num_inputs = int(l[0])
+    num_outputs = int(l[1])
+    i_read = 2
+
+    topology = []
+    for i in range(0, int(l[2])):
+        topology.append(int(l[i_read]))
+        i_read += 1
+    assert(len(topology) > 0)
+
+    # input layer
+    net = FFNN(topology, num_inputs, num_outputs)
+    input_layer = []
+
+    for i in range(0, topology[0]):
+
+        node = []
+        for j in range(0, num_inputs + 1):
+            node.append(float(l[i_read]))
+            i_read += 1
+
+        input_layer.append(node)
+
+    net.layers[0] = input_layer
+
+    # hidden layers
+    for i in range(1, len(topology)):
+
+        layer = []
+        for j in range(0, topology[i]):
+
+            node = []
+            for k in range(0, len(net.layers[i - 1])):
+                node.append(float(l[i_read]))
+                i_read += 1
+            layer.append(node)
+        net.layers[i] = layer
+
+    return net
+
+
 def mutate(net):
     """
     Mutates a neural net in place

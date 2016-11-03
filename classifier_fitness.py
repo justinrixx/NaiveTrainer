@@ -1,6 +1,36 @@
 import numpy as np
 import neuralnet
-import time
+
+
+def make_te_tr_sets(filename: str):
+    """
+    Makes the testing and training sets from a larger data set
+    :param filename: The filename of the data set to be used
+    :return: Two filenames. (training filename, testing filename)
+    """
+    
+    training_fname = filename + '.tr'
+    testing_fname = filename + '.te'
+
+    # get the data and shuffle it up
+    csv = np.genfromtxt(filename, delimiter=',', dtype=str)
+    np.random.shuffle(csv)
+
+    # split it into training and testing
+    tr_size = int(.7 * len(csv))
+    te_size = len(csv) - tr_size
+    tr_data = csv[:tr_size]
+    te_data = csv[tr_size:tr_size + te_size]
+
+    print("training_fname", training_fname)
+    print("testing_fname", testing_fname)
+
+    # save them out
+    np.savetxt(training_fname, tr_data, delimiter=',', fmt='%s')
+    np.savetxt(testing_fname, te_data, delimiter=',', fmt='%s')
+
+    # return the filenames
+    return testing_fname, training_fname
 
 
 def get_fitness_file(filename: str, net: neuralnet.FFNN):
@@ -13,12 +43,10 @@ def get_fitness_file(filename: str, net: neuralnet.FFNN):
 
     csv = np.genfromtxt(filename, delimiter=",", dtype=str)
 
-    # test with 70% to avoid over-fitting
-    cutoff_point = int(.7 * len(csv))
+    return get_fitness_ds(csv, net)
 
-    # get a random sample of the data
-    csv = csv[np.random.choice(csv.shape[0], size=cutoff_point, replace=False)]
 
+def get_fitness_ds(csv, net: neuralnet.FFNN):
     numcols = len(csv[0])
     data = csv[:, :numcols - 1]  # the first columns are the data
     targets = csv[:, numcols - 1]  # the last column is the targets

@@ -2,7 +2,6 @@ import sys
 import getopt
 import neuralnet
 import os
-import nnrunner
 import classifier_fitness as cf
 import numpy as np
 
@@ -11,12 +10,14 @@ NET_INPUTS = 4
 NET_OUTPUTS = 3
 INIT_DIR = "generationinit"
 NUM_AVERAGE = 3
-DATASET_FNAME = "/home/justin/Downloads/iris.csv"
+DATASET_FNAME = "/home/justin/data/iris.csv"
 
 # globals because yeah
 dataset = DATASET_FNAME
 num_inputs = NET_INPUTS
 num_outputs = NET_OUTPUTS
+testing_set = ''
+training_set = ''
 
 
 def main(argv):
@@ -33,6 +34,9 @@ def main(argv):
     num_iterations = 100
     survival_percentage = .3
     topology = []
+    global dataset
+    global num_inputs
+    global num_outputs
 
     # replace the parameters
     for key, val in optlist:
@@ -59,6 +63,15 @@ def main(argv):
     # can't run without a topology
     if not topology:
         print("Topology must be specified. Use -h or --help for help")
+        return
+    if dataset == '':
+        print("Dataset must be specified. Use -h or --help for help")
+        return
+
+    # split up into testing and training sets
+    global testing_set
+    global training_set
+    testing_set, training_set = cf.make_te_tr_sets(dataset)
 
     cutoff_point = int(survival_percentage * population_size)
 
@@ -116,7 +129,7 @@ def generate_brains(population, topology):
         # write it out and evaluate
         #neuralnet.to_file(INIT_DIR + "/" + organism['name'], organism['net'])
         #organism['fitness'] = get_fitness(INIT_DIR + "/" + organism['name'])
-        organism['fitness'] = get_fitness(dataset, organism['net'])
+        organism['fitness'] = get_fitness(training_set, organism['net'])
 
         brains.append(organism)
 
@@ -142,11 +155,11 @@ def repopulate(brains, population, generation):
 
         #neuralnet.to_file("temp.net", child1)
         #score1 = get_fitness("temp.net")
-        score1 = get_fitness(dataset, child1)
+        score1 = get_fitness(training_set, child1)
 
         #neuralnet.to_file("temp.net", child2)
         #score2 = get_fitness("temp.net")
-        score2 = get_fitness(dataset, child2)
+        score2 = get_fitness(training_set, child2)
 
         organism = {'name': str(generation + 1) + "-" + str(orgnum) + ".net",
                     'gen': 2}
