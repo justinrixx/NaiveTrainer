@@ -24,7 +24,7 @@ def main(argv):
 
     # How the program is to be used
     usage = "\tusage: --pop=[population size] --it=[number of iterations] --surv=[chance to survive]" \
-            " --topology=[layer1,layer2,etc], --ds=[dataset filename], --in[# of inputs] --out[# of outputs]\n"
+            " --topology=[layer1,layer2,etc] --ds=[dataset filename] --in[# of inputs] --out[# of outputs]\n"
 
     optlist, args = getopt.getopt(argv[1:], "h", ["help", "pop=", "it=", "surv=",
                                                   "topology=", "ds=", "in=", "out="])
@@ -104,9 +104,12 @@ def main(argv):
             organismfilename = dirname + "/" + organism['name']
             neuralnet.to_file(organismfilename, organism['net'])
 
+            # testing set
+            test_score = get_fitness(testing_set, organism['net'])
+
             # write out to the index and the points
             index.write(str(organism['fitness']) + "," + organismfilename.split('/')[-1] + "\n")
-            points.write(str(iteration) + "," + str(organism['fitness']) + "\n")
+            points.write(str(iteration) + "," + str(organism['fitness']) + "," + str(test_score) + "\n")
 
         index.close()
 
