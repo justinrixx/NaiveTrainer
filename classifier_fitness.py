@@ -27,9 +27,6 @@ def make_te_tr_sets(filename: str):
     tr_data = csv[:tr_size]
     te_data = csv[tr_size:tr_size + te_size]
 
-    print("training_fname", training_fname)
-    print("testing_fname", testing_fname)
-
     # save them out
     np.savetxt(training_fname, tr_data, delimiter=',', fmt='%s')
     np.savetxt(testing_fname, te_data, delimiter=',', fmt='%s')
