@@ -1,5 +1,6 @@
 import numpy as np
 import neuralnet
+import os.path
 
 
 def make_te_tr_sets(filename: str):
@@ -11,6 +12,10 @@ def make_te_tr_sets(filename: str):
     
     training_fname = filename + '.tr'
     testing_fname = filename + '.te'
+
+    # don't make the files if they already exist
+    if os.path.isfile(training_fname) and os.path.isfile(testing_fname):
+        return testing_fname, training_fname
 
     # get the data and shuffle it up
     csv = np.genfromtxt(filename, delimiter=',', dtype=str)
