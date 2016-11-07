@@ -7,8 +7,8 @@ import copy
 import numpy as np
 
 # constants
-NET_INPUTS = 21
-NET_OUTPUTS = 5
+NET_INPUTS = 5
+NET_OUTPUTS = 3
 INIT_DIR = "generationinit"
 NUM_AVERAGE = 3
 
@@ -151,7 +151,7 @@ def get_fitness(fname):
     scores = []
     for i in range(0, NUM_AVERAGE):
         scores.append(nnrunner.run(fname))
-    return int(np.mean(scores))
+    return np.mean(scores)
 
 
 # This is here to ensure main is only called when
