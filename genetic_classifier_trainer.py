@@ -126,12 +126,9 @@ def generate_brains(population, topology):
     for i in range(0, population):
         organism = {
             'net': neuralnet.FFNN(topology, num_inputs, num_outputs),
-            'name': "0-" + str(i) + ".net",
-            'gen': 2}
+            'name': "0-" + str(i) + ".net"}
 
         # write it out and evaluate
-        #neuralnet.to_file(INIT_DIR + "/" + organism['name'], organism['net'])
-        #organism['fitness'] = get_fitness(INIT_DIR + "/" + organism['name'])
         organism['fitness'] = get_fitness(training_set, organism['net'])
 
         brains.append(organism)
@@ -156,16 +153,10 @@ def repopulate(brains, population, generation):
         child1, child2 = neuralnet.sp_crossover(parents[i]['net'], parents[i + 1]['net'])
         #child1, child2 = neuralnet.u_crossover(parents[i]['net'], parents[i + 1]['net'])
 
-        #neuralnet.to_file("temp.net", child1)
-        #score1 = get_fitness("temp.net")
         score1 = get_fitness(training_set, child1)
-
-        #neuralnet.to_file("temp.net", child2)
-        #score2 = get_fitness("temp.net")
         score2 = get_fitness(training_set, child2)
 
-        organism = {'name': str(generation + 1) + "-" + str(orgnum) + ".net",
-                    'gen': 2}
+        organism = {'name': str(generation + 1) + "-" + str(orgnum) + ".net"}
 
         # only the strong are cared for
         if score1 > score2:
@@ -177,13 +168,6 @@ def repopulate(brains, population, generation):
 
         brains.append(organism)
         orgnum += 1
-
-
-#def get_fitness(fname):
-#    scores = []
-#    for i in range(0, NUM_AVERAGE):
-#        scores.append(nnrunner.run(fname))
-#    return int(np.mean(scores))
 
 
 def get_fitness(ds, net):
