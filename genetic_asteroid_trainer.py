@@ -3,7 +3,6 @@ import getopt
 import neuralnet
 import os
 import nnrunner
-import copy
 import numpy as np
 
 # constants
@@ -69,7 +68,7 @@ def main(argv):
         # kill stuff
         fits = [x['fitness'] for x in brains]
         dist = [x / np.sum(fits) for x in fits]
-        brains = copy.deepcopy(list(np.random.choice(brains, size=cutoff_point, p=dist, replace=False)))
+        brains = list(np.random.choice(brains, size=cutoff_point, p=dist, replace=False))
 
         repopulate(brains, population_size, iteration)
 
