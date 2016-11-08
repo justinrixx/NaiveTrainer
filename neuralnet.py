@@ -287,3 +287,15 @@ def get_outputs(layer, inputs):
         outputs.append(np.tanh(total))
 
     return outputs
+
+
+def zero_out(net: FFNN):
+    """
+    Sets all the weights in a neural net to 0
+    :param net: The neural net to zero out
+    """
+
+    for i in range(0, len(net.layers)):
+        for j in range(0, len(net.layers[i])):
+            for k in range(0, len(net.layers[i][j])):
+                net.layers[i][j][k] = 0
