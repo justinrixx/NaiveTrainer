@@ -27,7 +27,7 @@ class FFNN:
         # first layer
         out = get_outputs(self.layers[0], inputs)
 
-        for i in range (1, len(self.layers)):
+        for i in range(1, len(self.layers)):
             out = get_outputs(self.layers[i], out)
 
         return out
