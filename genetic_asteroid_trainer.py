@@ -6,7 +6,7 @@ import nnrunner
 import numpy as np
 
 # constants
-NET_INPUTS = 5
+NET_INPUTS = 6
 NET_OUTPUTS = 3
 INIT_DIR = "generationinit"
 NUM_AVERAGE = 3
@@ -45,6 +45,7 @@ def main(argv):
     # can't run without a topology
     if not topology:
         print("Topology must be specified. Use -h or --help for help")
+        return
 
     cutoff_point = int(survival_percentage * population_size)
 
